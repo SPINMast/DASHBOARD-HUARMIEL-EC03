@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard de control · Huarmiel</title>
+<style>
+:root{--bg:#faf6ec;--card:#fff;--tx:#2b2418;--mu:#7a6e58;--bd:#e8dfc9;--ac:#c88a12;--g:#2e9e5b;--y:#e0a21b;--r:#d0443a;--n:#b8b09c;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17130c;--card:#221c11;--tx:#f3ead6;--mu:#a99d84;--bd:#3a3121;--ac:#f0b73a;--g:#43c27a;--y:#f0b73a;--r:#ef6a5f;--n:#6d6450;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17130c;--card:#221c11;--tx:#f3ead6;--mu:#a99d84;--bd:#3a3121;--ac:#f0b73a;--g:#43c27a;--y:#f0b73a;--r:#ef6a5f;--n:#6d6450;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:1180px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:0 0 2px}h2{font-size:16px;margin:0 0 10px}
+.sub{color:var(--mu);font-size:13px;margin:0 0 14px}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 14px;margin-bottom:14px}
+.bar input{flex:1;min-width:140px;accent-color:var(--ac)}
+.pill{background:var(--ac);color:#fff;border-radius:99px;padding:2px 10px;font-weight:600;font-size:13px}
+.g{display:grid;gap:12px;margin-bottom:14px}
+.g6{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;min-width:0}
+.k .l{font-size:12px;color:var(--mu)}.k .v{font-size:22px;font-weight:700;margin:2px 0}.k .s{font-size:12px;color:var(--mu)}
+.pb{height:6px;background:var(--bd);border-radius:9px;margin-top:8px;overflow:hidden}.pb i{display:block;height:100%;background:var(--ac)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+.sc{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:720px}
+th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}
+th{color:var(--mu);font-weight:600;font-size:12px}
+.ch{position:relative;height:250px}
+.m{margin-bottom:10px}.m .t{display:flex;justify-content:space-between;font-size:13px}
+ul{margin:0;padding-left:18px;font-size:13px}li{margin-bottom:4px}
+.ok{color:var(--g)}.rj{color:var(--r);font-weight:600}
+.f{font-size:12px;color:var(--mu);margin-top:6px}
+</style></head><body><div class="w">
+<h1>Dashboard de control · Huarmiel</h1>
+<p class="sub">Colmenares Zúñiga · Plan de marketing para Lima Metropolitana · Sección 7.3 del EC3 · <b>Datos simulados</b> (año 1)</p>
+<div class="bar"><label for="mes"><b>Mes de corte</b></label><input id="mes" type="range" min="1" max="12" value="12"><span class="pill" id="mt">M12</span><button id="play" style="padding:4px 12px;border-radius:99px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer;font:inherit">▶ Reproducir</button><span class="sub" style="margin:0">Mueve el control para ver cómo cambia el semáforo mes a mes.</span></div>
+
+<div class="g g6" id="cards"></div>
+
+<div class="c" style="margin-bottom:14px"><h2>Semáforo de control (7.3)</h2><div class="sc"><table id="tb"></table></div>
+<p class="f">Regla de decisión: si un indicador está en rojo dos meses seguidos, se revisa la estrategia asociada y, de ser necesario, se reformula.</p></div>
+
+<div class="g g2">
+<div class="c"><h2>Alertas de la regla de decisión</h2><ul id="al"></ul></div>
+<div class="c"><h2>KPIs de mercado (7.1)</h2><div id="mk"></div></div>
+</div>
+
+<div class="g g2">
+<div class="c"><h2>Ventas mensuales: real vs. proyección (S/)</h2><div class="ch"><canvas id="c1"></canvas></div></div>
+<div class="c"><h2>Frascos acumulados y punto de equilibrio</h2><div class="ch"><canvas id="c2"></canvas></div></div>
+<div class="c"><h2>Frascos vendidos por canal</h2><div class="ch"><canvas id="c3"></canvas></div></div>
+<div class="c"><h2>Ventas por punto de venta (acumulado)</h2><div class="ch"><canvas id="c4"></canvas></div></div>
+<div class="c"><h2>Posicionamiento y fidelización (%)</h2><div class="ch"><canvas id="c5"></canvas></div></div>
+<div class="c"><h2>Mix de productos (año 1)</h2><div class="ch"><canvas id="c6"></canvas></div></div>
+</div>
+<p class="f">Supuestos de la simulación: precio objetivo S/ 30 por frasco; proyección base de 1.283 frascos y S/ 38.490; punto de equilibrio de 667 frascos (costos fijos simulados de S/ 8.000); ROI calculado como utilidad bruta acumulada frente a esa inversión. Todos los valores “reales” son inventados para ilustrar el funcionamiento del tablero.</p>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const MS=Array.from({length:12},(_,i)=>'M'+(i+1)),P=30,FIX=8000;
+const plan=[40,55,70,80,90,100,110,120,130,150,165,173],real=[36,52,71,76,95,98,104,118,121,139,158,170];
+const tk=[28.8,29.2,29.6,29.9,30.2,30.4,30.8,31,31.2,31.4,31.5,31.6];
+const mg=[34,35,37,38,39,40,41,41,42,42,43,43],rc=[null,null,14,14,14,24,24,24,31,31,31,36];
+const pv=[1,2,3,3,4,4,5,5,6,6,7,7],ad=[0,6,14,22,27,31,34,38,41,44,49,55];
+const qr=[45,62,78,85,92,97,101,104,108,112,118,121],fz=[0,0,0,.5,.5,1.5,1,.5,0,0,0,.5];
+const cac=[18,17,16,15,14,13.5,13,12.5,12,11.5,11,10.5];
+const rec=[1,2,3.5,5,6.5,8,9,10.5,11.5,12.5,13.5,14.5],aso=[6,10,15,19,23,27,28,29,30,31,32,33];
+const conv=[2,4,8,12,15,17,18,19,20,21,22,23],rv=[1,3,5,8,11,13,15,18,22,26,31,37];
+const sal=real.map((r,i)=>r*tk[i]),tgt=plan.map(p=>p*P);
+const $=s=>document.querySelector(s),f0=v=>Math.round(v).toLocaleString('es-PE');
+const sum=(a,n)=>a.slice(0,n+1).reduce((x,y)=>x+y,0);
+const COL=['var(--g)','var(--y)','var(--r)','var(--n)'],TX=['Verde','Amarillo','Rojo','Sin dato'];
+const dot=s=>`<span class="dot" style="background:${COL[s<0?3:s]}"></span>`;
+const I=[
+{n:'Ventas mensuales',meta:'Según proyección',f:'Mensual',r:'Titular',e:'E2 · E3',v:sal,s:(v,i)=>{const p=v/tgt[i]*100;return p>=100?0:p>=80?1:2},fm:v=>'S/ '+f0(v),pc:(v,i)=>v/tgt[i]*100},
+{n:'Margen bruto por frasco',meta:'≥ 40 %',f:'Mensual',r:'Administración',e:'E2',v:mg,s:v=>v>=40?0:v>=35?1:2,fm:v=>v+' %',pc:v=>v/40*100},
+{n:'Tasa de recompra',meta:'35 %',f:'Trimestral',r:'Comercial',e:'E3 · E4',v:rc,s:v=>v>=35?0:v>=25?1:2,fm:v=>v+' %',pc:v=>v/35*100},
+{n:'Puntos de venta activos',meta:'6',f:'Mensual',r:'Comercial',e:'E3',v:pv,s:v=>v>=6?0:v>=4?1:2,fm:v=>v,pc:v=>v/6*100},
+{n:'Alcance digital en Lima',meta:'+30 %',f:'Mensual',r:'Marketing',e:'E4',v:ad,s:v=>v>=30?0:v>=10?1:2,fm:v=>'+'+v+' %',pc:v=>v/30*100},
+{n:'Escaneos de QR',meta:'Meta por lote',f:'Mensual',r:'Apoyo digital',e:'E1',v:qr,s:v=>v>=100?0:v>=80?1:2,fm:v=>v+' % de la meta',pc:v=>v},
+{n:'Avance de formalización',meta:'100 % en plazo',f:'Mensual',r:'Gerencia',e:'General',v:fz,s:v=>v===0?0:v<1?1:2,fm:v=>v===0?'En plazo':'Atraso '+v+' m',pc:null}];
+const st=(it,i)=>it.v[i]==null?-1:it.s(it.v[i],i);
+let m=11,ch={};
+const base=[['Bioferia Surquillo',268],['WhatsApp y delivery',298],['Naturista Miraflores',214],['Naturista Barranco',176],['Bioferia Barranco',142],['Naturista Surquillo',98],['Retail especializado (piloto)',42]];
+const mix=[['Miel cruda',88],['Polen',6],['Propóleo',4],['Algarrobina',2]];
+function shares(i){const b=.62-.027*i,n=.10+.015*i,r=i>=8?.02*(i-7):0;return[b,n,1-b-n-r,r]}
+function cards(){
+ const cf=sum(real,m),cs=sum(sal,m),gp=sal.slice(0,m+1).reduce((a,x,i)=>a+x*mg[i]/100,0),roi=(gp-FIX)/FIX*100;
+ const be=real.findIndex((_,i)=>sum(real,i)>=667),mp=tk[m]*mg[m]/100;
+ const K=[['Ventas acumuladas','S/ '+f0(cs),'Meta anual S/ 38.490',cs/38490*100,cs/38490>=m/12*.95?0:1],
+ ['Frascos vendidos',f0(cf),'Meta anual 1.283',cf/1283*100,cf/1283>=(m+1)/12*.9?0:1],
+ ['Punto de equilibrio',cf>=667?'Alcanzado'+(be<=m?' · M'+(be+1):''):'Faltan '+(667-cf),'667 frascos',Math.min(100,cf/667*100),cf>=667?0:1],
+ ['Ticket promedio','S/ '+(cs/cf).toFixed(2),'Precio objetivo S/ 30',Math.min(100,cs/cf/P*100),cs/cf>=P?0:1],
+ ['CAC vs. margen 1.ª compra','S/ '+cac[m].toFixed(1),'Margen 1.ª compra S/ '+mp.toFixed(1),Math.min(100,mp/cac[m]*100),cac[m]<=mp?0:2],
+ ['ROI de la expansión',(roi>=0?'+':'')+roi.toFixed(0)+' %','Utilidad bruta acum. vs. S/ 8.000',Math.max(0,Math.min(100,gp/FIX*100)),roi>0?0:2]];
+ $('#cards').innerHTML=K.map(k=>`<div class="c k"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="s">${dot(k[4])}${k[2]}</div><div class="pb"><i style="width:${Math.min(100,k[3])}%"></i></div></div>`).join('');
+}
+function table(){
+ let h='<tr><th>Indicador</th><th>Meta</th><th>Real</th><th>% cumpl.</th><th>Estado</th><th>Frecuencia</th><th>Responsable</th><th>Acción</th></tr>';
+ I.forEach(it=>{const s=st(it,m),pr=m>0?st(it,m-1):-1,v=it.v[m],red=s===2&&pr===2;
+ h+=`<tr><td><b>${it.n}</b></td><td>${it.meta}</td><td>${v==null?'—':it.fm(v,m)}</td><td>${v==null||!it.pc?'—':Math.round(it.pc(v,m))+' %'}</td><td>${dot(s)}${TX[s<0?3:s]}</td><td>${it.f}</td><td>${it.r}</td><td class="${red?'rj':'ok'}">${red?'Revisar estrategia '+it.e:'OK'}</td></tr>`});
+ $('#tb').innerHTML=h;
+}
+function alerts(){
+ const L=[];
+ I.forEach(it=>{let a=-1;for(let i=0;i<=m+1;i++){const r=i<=m&&st(it,i)===2;if(r&&a<0)a=i;if(!r&&a>=0){if(i-a>=2)L.push(`<li><b>${it.n}</b>: rojo de M${a+1} a M${i} (${i-a} meses) → revisar ${it.e}</li>`);a=-1}}});
+ $('#al').innerHTML=L.length?L.join(''):'<li class="ok">Sin indicadores en rojo dos meses seguidos hasta este mes.</li>';
+}
+function market(){
+ const last=rc.slice(0,m+1).filter(x=>x!=null).pop()||0;
+ const R=[['Reconocimiento de marca en Lima',rec[m],15],['Asociación con “miel pura y artesanal”',aso[m],30],['Recompra trimestral',last,35],['Conversión a formato mayor',conv[m],20]];
+ $('#mk').innerHTML=R.map(r=>`<div class="m"><div class="t"><span>${r[0]}</span><b>${r[1]} % <span style="color:var(--mu);font-weight:400">/ meta ${r[2]} %</span></b></div><div class="pb"><i style="width:${Math.min(100,r[1]/r[2]*100)}%"></i></div></div>`).join('')+
+ `<div class="m"><div class="t"><span>Reseñas publicadas</span><b>${rv[m]} <span style="color:var(--mu);font-weight:400">/ meta 20</span></b></div><div class="pb"><i style="width:${Math.min(100,rv[m]/20*100)}%"></i></div></div>`;
+}
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const cut=a=>a.map((x,i)=>i<=m?x:null);
+function data(){
+ const cum=real.map((_,i)=>sum(real,i)),pcum=plan.map((_,i)=>sum(plan,i));
+ const sh=real.map((r,i)=>shares(i).map(s=>Math.round(r*s)));
+ const tot=sum(real,m);
+ return{
+ c1:[cut(sal),tgt],c2:[cut(cum),pcum,MS.map(()=>667)],
+ c3:[0,1,2,3].map(k=>cut(sh.map(x=>x[k]))),
+ c4:base.map(b=>Math.round(b[1]*tot/1238)),
+ c5:[cut(mg),cut(rc),cut(rec),cut(aso)]};
+}
+function build(){
+ Object.values(ch).forEach(c=>c.destroy());
+ const tx=css('--mu'),gr=css('--bd'),C=['--ac','--g','--r','--y'].map(css),T=['#c88a12','#2f6f6a','#b9566b','#6b7fb8'];
+ Chart.defaults.color=tx;Chart.defaults.borderColor=gr;Chart.defaults.font.size=11;
+ const d=data(),O={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}};
+ const sc=(x)=>({scales:{x:{stacked:!!x,grid:{display:false}},y:{stacked:!!x,beginAtZero:true}}});
+ ch.c1=new Chart($('#c1'),{data:{labels:MS,datasets:[{type:'bar',label:'Real',data:d.c1[0],backgroundColor:T[0],borderRadius:4},{type:'line',label:'Proyección',data:d.c1[1],borderColor:T[1],backgroundColor:T[1],tension:.3,pointRadius:2}]},options:{...O,...sc()}});
+ ch.c2=new Chart($('#c2'),{type:'line',data:{labels:MS,datasets:[{label:'Real acumulado',data:d.c2[0],borderColor:T[0],backgroundColor:T[0],tension:.3},{label:'Proyección acumulada',data:d.c2[1],borderColor:T[1],backgroundColor:T[1],tension:.3,borderDash:[5,4]},{label:'Punto de equilibrio (667)',data:d.c2[2],borderColor:T[2],backgroundColor:T[2],pointRadius:0,borderWidth:1.5}]},options:{...O,...sc()}});
+ const NM=['Bioferias','Tiendas naturistas','WhatsApp y delivery','Retail especializado'],NC=[T[0],T[1],T[3],T[2]];
+ ch.c3=new Chart($('#c3'),{type:'bar',data:{labels:MS,datasets:[0,2,1,3].map(k=>({label:NM[k],data:d.c3[k===2?2:k===1?1:k===3?3:0],backgroundColor:NC[k]}))},options:{...O,...sc(1)}});
+ ch.c4=new Chart($('#c4'),{type:'bar',data:{labels:base.map(b=>b[0]),datasets:[{label:'Frascos',data:d.c4,backgroundColor:T[0],borderRadius:4}]},options:{...O,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true},y:{grid:{display:false}}}}});
+ ch.c5=new Chart($('#c5'),{type:'line',data:{labels:MS,datasets:[['Margen bruto',0],['Recompra',1],['Reconocimiento',2],['Asociación de marca',3]].map(([l,k])=>({label:l,data:d.c5[k],borderColor:T[k],backgroundColor:T[k],tension:.3,spanGaps:true}))},options:{...O,...sc()}});
+ ch.c6=new Chart($('#c6'),{type:'doughnut',data:{labels:mix.map(x=>x[0]),datasets:[{data:mix.map(x=>x[1]),backgroundColor:T,borderWidth:0}]},options:{...O,cutout:'62%'}});
+}
+function upd(){
+ $('#mt').textContent='M'+(m+1);cards();table();alerts();market();
+ const d=data();
+ ch.c1.data.datasets[0].data=d.c1[0];ch.c2.data.datasets[0].data=d.c2[0];
+ [0,1,2,3].forEach(k=>{const idx=[0,2,1,3].indexOf(k);ch.c3.data.datasets[idx].data=d.c3[k]});
+ ch.c4.data.datasets[0].data=d.c4;[0,1,2,3].forEach(k=>ch.c5.data.datasets[k].data=d.c5[k]);
+ ['c1','c2','c3','c4','c5'].forEach(k=>ch[k].update('none'));
+}
+$('#mes').addEventListener('input',e=>{m=+e.target.value-1;upd()});
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{build();upd()});
+let tm=null;
+$('#play').addEventListener('click',()=>{
+ if(tm){clearInterval(tm);tm=null;$('#play').textContent='▶ Reproducir';return}
+ $('#play').textContent='⏸ Pausar';
+ tm=setInterval(()=>{m=(m+1)%12;$('#mes').value=m+1;upd()},1200);
+});
+build();upd();
+</script></body></html>
